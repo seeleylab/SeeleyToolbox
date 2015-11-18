@@ -1,0 +1,15 @@
+#!/bin/bash
+#$ -cwd
+##$ -j y
+#$ -S /bin/bash
+#$ -l h=!seeley4
+
+. /etc/profile
+
+matlab -nodesktop << EOF
+try
+  run rsfmri_preprocess.m;
+end
+quit
+EOF
+

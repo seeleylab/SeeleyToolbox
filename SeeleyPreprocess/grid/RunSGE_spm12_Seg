@@ -1,0 +1,29 @@
+#!/bin/bash
+preproc_root=$1
+
+outname=`head -1 ${preproc_root}/proc/subjdirVBM.txt`
+n_lines=`wc -l ${preproc_root}/proc/subjdirVBM.txt | awk '{print $1}'`
+n_lines_sub1=`echo "$n_lines - 1" | bc`
+
+for s in `tail -${n_lines_sub1} ${preproc_root}/proc/subjdirVBM.txt`; 
+	do
+	cd $s 
+	logdir=${outname}/log/
+	processed_img_count=`ls ${s}/${outname}/s8m0wp1*.nii 2> /dev/null | wc -l`
+        cd $logdir
+
+	if [ ! -e ${s}/${logdir}subjectLocked ]
+	then
+		if [ "processed_img_count" != "0" ]
+		then
+			setupfile=${s}/${logdir}vbmSetup.mat
+			sed "s|loadsubfile|$setupfile|g" ${preproc_root}/proc/preprocess_SPM12_SEG_MASTER.m  > ${s}/${logdir}preprocess_SPM12_SEG.m
+            		pwd
+			/opt/sge/bin/linux-x64/qsub ${preproc_root}/grid/qsub_run_spm12_seg_MASTER
+		else
+			echo ${s} has already been preprocessed!
+		fi
+	else
+		echo ${s} is already being processed!
+	fi
+done

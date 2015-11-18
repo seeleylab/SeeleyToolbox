@@ -1,0 +1,13 @@
+#!/bin/bash
+#$ -l h=!seeley4
+#$ -cwd
+##$ -j y
+#$ -S /bin/bash
+. /etc/profile
+matlab -nodesktop << EOF
+try
+run preprocess_SPM12_SEG.m;
+end
+quit
+EOF
+

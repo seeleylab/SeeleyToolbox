@@ -1,0 +1,26 @@
+#!/bin/bash
+preproc_root=$1
+
+suffix=`head -1 ${preproc_root}/proc/subjdir.txt`
+n_lines=`wc -l ${preproc_root}/proc/subjdir.txt | awk '{print $1}'`
+n_lines_sub1=`echo "$n_lines - 1" | bc`
+
+
+for i in `tail -${n_lines_sub1} ${preproc_root}/proc/subjdir.txt`; 
+	do
+	cd $i 
+	logdir=interfmri_${suffix}/log/
+	processed_img=${i}/processedfmri_${suffix}/images/swua_filteredf_0001.nii
+	cd $logdir
+
+	if [ ! -e $processed_img ]
+	then
+		setupfile=${i}/${logdir}preprocSetup.mat
+		sed "s|loadsubfile|$setupfile|g" ${preproc_root}/proc/rsfmri_preprocess_MASTER.m  > ${i}/${logdir}rsfmri_preprocess.m
+
+		. /etc/profile
+		qsub ${preproc_root}/grid/qsub_run_MASTER
+	else
+		echo ${i} has already been preprocessed!
+	fi	
+done

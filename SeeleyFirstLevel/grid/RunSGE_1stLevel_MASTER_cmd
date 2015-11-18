@@ -1,0 +1,48 @@
+#!/bin/bash
+# RunSGE_1stLevel_MASTER_cmd
+# set up and run subject first level roi processing by:
+# 1) specify seed roi mask and other study-specific parameters (eg TR) in main first level matlab script ($roi_script)
+# 2) set up first level processing template script for each subject
+# 3) submit each subject to cluster
+# Usage: RunSGE_1stLevel_MASTER_cmd TRCNnSFmDI /data/mridata/jbrown/subjlist_66.mat /data/mridata/jbrown/firstlevel_process_MASTER_cmd_rFI.m
+
+dir_suffix=$1 # preprocessing suffix, eg TRCNnSFmDI
+subjdir_file=$2 # column file listing each subject's rsfmri directory on successive rows as either 1) .mat file or 2) .txt file without single quotes
+roi_script=$3 # optional; matlab roi_process script, either a study-specific customized template or else the generic template
+timestamp=`date +"%Y_%m_%d_%H_%M"`
+
+firstlevel_dir=/data/mridata/SeeleyToolbox/SeeleyFirstLevel
+
+# specify roi_process template script, custom or default
+if [ ${roi_script} ]; then
+  :
+else
+  roi_script= ${firstlevel_dir}/proc/firstlevel_process_MASTER_cmd.m
+fi
+
+# create subjdirROI text file listing each subject's rsfmri directory, .mat or .txt
+subjdir_master_file=`pwd`/subjdir_firstlevel_${timestamp}.txt
+if [[ ${subjdir_file} == *".mat" ]]; then
+  # matlab script to create .txt file without single quotes from .mat file
+  subjdir_file_str=`echo \'$subjdir_file\'`
+  subjdir_master_file_str=`echo \'$subjdir_master_file\'`
+  cd ${firstlevel_dir}/grid
+  matlab -nodesktop -nosplash -r "make_subjdir_txt($subjdir_file_str,$subjdir_master_file_str);quit"
+else
+  cp ${subjdir_file} ${subjdir_master_file}
+fi
+
+# customize roi_process script for each subject and submit job
+for subjdir in `more ${subjdir_master_file}`; do
+  inter_dir_name=interfmri_${dir_suffix}
+  inter_log_dir=${subjdir}/${inter_dir_name}/log
+  processed_dir_name=processedfmri_${dir_suffix}
+  processed_log_dir=${subjdir}/${processed_dir_name}/log
+  mkdir -p ${processed_log_dir}/${timestamp}
+
+  setup_file=${inter_log_dir}/preprocSetup.mat
+  sed "s|loadsubfile|$setup_file|g" ${roi_script} > ${processed_log_dir}/${timestamp}/firstlevel_process_cmd.m
+  chmod 775 ${processed_log_dir}/${timestamp}/firstlevel_process_cmd.m
+  cd ${processed_log_dir}/${timestamp}
+  qsub ${firstlevel_dir}/grid/qsub_run_1stLevel_MASTER_cmd
+done

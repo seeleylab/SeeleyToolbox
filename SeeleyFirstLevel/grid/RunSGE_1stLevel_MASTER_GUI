@@ -1,0 +1,18 @@
+#!/bin/bash
+firstlevel_root=$1
+datetimestring=$2
+outname=`head -1 ${firstlevel_root}/gui/subjdir.txt`
+n_lines=`wc -l ${firstlevel_root}/gui/subjdir.txt | awk '{print $1}'`
+n_lines_sub1=`echo "$n_lines - 1" | bc`
+
+for i in `tail -${n_lines_sub1} ${firstlevel_root}/gui/subjdir.txt`; 
+	do
+	logdir=processedfmri_$outname/log/$datetimestring/
+	cd ${i}/${logdir}
+	setupfile=${i}/${logdir}roiSetup.mat
+	sed "s|loadsubfile|$setupfile|g" ${firstlevel_root}/proc/firstlevel_process_MASTER_GUI.m  > ${i}/${logdir}firstlevel_process_GUI.m
+
+	. /etc/profile
+	qsub ${firstlevel_root}/grid/qsub_run_1stLevel_MASTER
+		
+done

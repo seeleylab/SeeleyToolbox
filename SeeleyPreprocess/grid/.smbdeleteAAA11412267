@@ -1,0 +1,75 @@
+#!/bin/bash
+# RunSGEpreproc_MASTER
+# set up subject for rsfMRI preprocessing by:
+# 1) creating .mat file that lists structural and functional .nii/.img files
+# 2) update preprocessing template script for each subject
+# 3) submit each subject to cluster
+
+cur_dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+root_pth=`echo $cur_dir | awk -F'/grid' '{print $1}'`
+util_dir=${root_pth}/util
+grid_dir=${root_pth}/grid
+proc_dir=${root_pth}/proc
+
+dir_suffix=$1
+mat_file=$2
+dir_suffix_str=`echo \'$dir_suffix\'`
+mat_file=`echo \'$mat_file\'`
+num_trs=$3
+del_scans=$4
+use_sge=$5
+rsfmri_prefix=`echo \'\'`
+t1_prefix=`echo \'\'`
+mode=`echo \'rsfmri_nongui\'`
+proc_dir_str=`echo \'$proc_dir\'`
+
+if [ -e ${proc_dir}/subjdir.txt ]; then 
+rm ${proc_dir}/subjdir.txt
+fi
+
+cd ${util_dir}/
+matlab -nodesktop -nosplash -r "load $mat_file;GetSubjectImgs(subjdir,$num_trs,$del_scans,$rsfmri_prefix,$t1_prefix,$mode);quit"
+matlab -nodesktop -nosplash -r "make_subjlist($mat_file,$dir_suffix_str,$proc_dir_str);quit"
+
+n_lines=`wc -l ${proc_dir}/subjdir.txt | awk '{print $1}'`
+n_lines_sub1=`echo "$n_lines - 1" | bc`
+for i in `tail -${n_lines_sub1} ${proc_dir}/subjdir.txt`;
+
+do
+cd $i 
+inter_dir=interfmri_${dir_suffix}
+
+if [ ! -e processedfmri_${dir_suffix}/images/swdua_filteredf_0234.nii ]
+then
+
+if [ -e $inter_dir ]
+then
+rm -r $inter_dir
+fi
+
+mkdir -p $inter_dir/log
+
+cd $inter_dir/log
+
+if [ -e rsfmri_preprocess.m ]
+then
+rm -f rsfmri_preprocess.m
+fi
+
+cp ${proc_dir}/rsfmri_preprocess_MASTER.m ./rsfmri_preprocess.m
+mv ${i}/rawfmri/preprocSetup.mat $i/$inter_dir/log
+setupfile=$i/$inter_dir/log/preprocSetup.mat
+sed "s|loadsubfile|$setupfile|g" ${proc_dir}/rsfmri_preprocess_MASTER.m  > rsfmri_preprocess.m
+
+. /etc/profile
+if [ $use_sge -eq 1 ] ; then
+	qsub ${grid_dir}/qsub_run_MASTER
+else
+	matlab -nodesktop -nosplash -r "rsfmri_preprocess.m;quit"
+fi
+
+else
+echo $i already preprocessed!
+fi
+
+done

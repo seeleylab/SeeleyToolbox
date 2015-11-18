@@ -1,0 +1,14 @@
+#!/bin/bash
+#$ -l h=!seeley7
+#
+#$ -cwd
+##$ -j y
+#$ -S /bin/bash
+. /etc/profile
+
+matlab -nodesktop << EOF
+try
+	run firstlevel_process_cmd.m;
+end
+quit
+EOF
