@@ -193,7 +193,6 @@ for r=1:n_seeds
     % if add motion spike regressors to model
     if motion_spikes
         spike_regressors_file=sprintf('%s/motion_corr/spike_regressors.txt',interfmri_dir_fullpth);
-        spike_regressors = load([main_dir '/' origdir '/' 'mc/spike_regressors.txt']);
         spike_regressors=load(spike_regressors_file);
         nuisance_regressors=[nuisance_regressors spike_regressors];
     end

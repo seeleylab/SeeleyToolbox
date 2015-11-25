@@ -1,2 +1,11 @@
 TRCNnSFmDI
-/data5/patientNIC/17020/17020_20150511/rsfmri
+/data5/patientNIC/7604/7604_20081210/rsfmri
+/data6/controlNIC/7836/7836_20090112/rsfmri
+/data5/patientNIC/8740/8740_20090224/rsfmri
+/data5/patientNIC/6757/6757_20081219/rsfmri
+/data6/controlNIC/3700/3700_20090929/rsfmri
+/data5/patientNIC/8678/8678_20100825/rsfmri
+/data5/patientNIC/9220/9220_20110517/rsfmri
+/data5/patientNIC/11028/11028_20110926/rsfmri
+/data5/patientNIC/14267/14267_20120702/rsfmri
+/data5/patientNIC/16780/16780_20131121/rsfmri
