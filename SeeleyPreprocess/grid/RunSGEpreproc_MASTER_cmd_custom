@@ -57,10 +57,10 @@ then
 rm -f rsfmri_preprocess.m
 fi
 
-cp ${proc_dir}/rsfmri_preprocess_MASTER.m ./rsfmri_preprocess.m
+cp ${proc_dir}/rsfmri_preprocess_MASTER_custom.m ./rsfmri_preprocess.m
 mv ${i}/rawfmri/preprocSetup.mat $i/$inter_dir/log
 setupfile=$i/$inter_dir/log/preprocSetup.mat
-sed "s|loadsubfile|$setupfile|g" ${proc_dir}/rsfmri_preprocess_MASTER.m  > rsfmri_preprocess.m
+sed "s|loadsubfile|$setupfile|g" ${proc_dir}/rsfmri_preprocess_MASTER_custom.m  > rsfmri_preprocess.m
 
 . /etc/profile
 if [ $use_sge -eq 1 ] ; then

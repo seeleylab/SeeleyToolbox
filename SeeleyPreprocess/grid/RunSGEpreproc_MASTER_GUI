@@ -19,7 +19,7 @@ for i in `tail -${n_lines_sub1} ${preproc_root}/proc/subjdir.txt`;
 		sed "s|loadsubfile|$setupfile|g" ${preproc_root}/proc/rsfmri_preprocess_MASTER.m  > ${i}/${logdir}rsfmri_preprocess.m
 
 		. /etc/profile
-		qsub ${preproc_root}/grid/qsub_run_MASTER
+		/opt/sge/bin/linux-x64/qsub ${preproc_root}/grid/qsub_run_MASTER
 	else
 		echo ${i} has already been preprocessed!
 	fi	

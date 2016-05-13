@@ -55,8 +55,8 @@ scale_regs=false; % if convert all regressors to Z scores
 % Seed ROI in marsbar format; can take multiple ROIs and generate multiple
 % seed connectivity directories/maps
 %seed_mask={'/data/mridata/jbrown/brains/rois/44rvFI_vAt12_C2vx123_roi.mat','/data/mridata/nic/Stats/PSP_2010/rois/Boxer_DMidbrainTeg_sphere_3-5_-15_-8_roi.mat','/data/mridata/jbrown/brains/rois/rPCC_sphere_roi.mat'};
-%seed_mask={'/data/mridata/jbrown/brains/rois/44rvFI_vAt12_C2vx123_roi.mat'};
-seed_mask={'/data3/mridata3/cfredericks/brains/pulvinar2.mat'};
+seed_mask={'/data/mridata/jbrown/brains/rois/44rvFI_vAt12_C2vx123_roi.mat'};
+
 
 % Statistics input files + options
 global_ts_mat=sprintf('%s/job_stats_global_spm8.mat',files_dir);
@@ -262,6 +262,8 @@ for r=1:n_seeds
     
     if explicit_mask
         matlabbatch{1}.spm.stats.fmri_spec.mask={brain_mask_explicit};
+    else
+        matlabbatch{1}.spm.stats.fmri_spec.mask='None';
     end
     
     % fmri estimation

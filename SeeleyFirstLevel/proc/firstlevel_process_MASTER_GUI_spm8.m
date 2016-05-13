@@ -261,6 +261,8 @@ for r=1:n_seeds
     
     if explicit_mask
         matlabbatch{1}.spm.stats.fmri_spec.mask={brain_mask_explicit};
+    else
+        matlabbatch{1}.spm.stats.fmri_spec.mask='None';
     end
     
     % fmri estimation

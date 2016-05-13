@@ -95,15 +95,14 @@ log_dir='log';
 melodic_dir='melodic.ica';
 
 % fMRI specifications
-TR=2;
-n_scans_remove=5; % number of volumes excluded from beginning of BOLD fMRI scan
+TR=0.85;
+n_scans_remove=12; % number of volumes excluded from beginning of BOLD fMRI scan
 spike_cutoff=1; % amount of motion displacement in mm above which to flag a motion spike
 interleave_cutoff=670; % interleave score above which a component is identified as interleave
 fix_thresh=20; % if running ICA + FIX, threshold for component exclusion; 20 is standard, exludes many comps; 10 is "lite", excludes fewer
 nonlin_reg=1; % if running SPM normalization: amount of regularization. 1 is standard, 10 allows less warping.
 struc_match_headers=false; % if skull stripping, copy header from skull stripped image to original structural image
-slice_order=[2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 1 3 5 7 9 11 13 15 17 19 21 23 25 27 29 31 33 35]; % default for Trio interleave acq. with even number of slices
-%slice_order=[1:37];
+slice_order=[2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50 52 54 56 58 60 62 64 66 1 3 5 7 9 11 13 15 17 19 21 23 25 27 29 31 33 35 37 39 41 43 45 47 49 51 53 55 57 59 61 63 65];
 smooth_fwhm=[6 6 6]; % spatial smoothing Gaussian kernel size in mm for x,y,z
 
 if gui

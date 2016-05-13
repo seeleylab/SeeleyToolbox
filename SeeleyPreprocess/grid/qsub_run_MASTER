@@ -2,7 +2,6 @@
 #$ -cwd
 ##$ -j y
 #$ -S /bin/bash
-#$ -l h=!seeley4
 
 . /etc/profile
 
